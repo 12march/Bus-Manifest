@@ -12,6 +12,15 @@ class ManifestTest extends TestCase
 	use RefreshDatabase;
 
 	/** @test */
+	public function can_see_the_manifest()
+	{
+		$response = $this->get('/manifest');
+
+        $response->assertStatus(200)
+                ->assertSeeText('Manifest');
+	}
+
+	/** @test */
 	public function can_return_collection_of_manifest()
 	{
 		$this->withoutExceptionHandling();
@@ -40,7 +49,7 @@ class ManifestTest extends TestCase
     /** @test */
     public function passengers_details_can_be_added()
     {
-    	// $this->withoutExceptionHandling();
+    	$this->withoutExceptionHandling();
 
         $response = $this->post('/manifest', [
         	'name' => 'Emmanuel',
@@ -51,6 +60,14 @@ class ManifestTest extends TestCase
         ]);
 
         $this->assertCount(1, Manifest::all());
+        $this->assertDatabaseHas('manifests', [
+    		'name' => 'Emmanuel',
+        	'gender' => 'male',
+        	'seat_number' => 7,
+        	'phone' => '424755432',
+        	'address' => '12 Fasoro, surulere',
+    	]);
+
         $response->assertRedirect('/manifest');
     }
 
@@ -73,7 +90,7 @@ class ManifestTest extends TestCase
     /** @test */
     public function passengers_details_can_be_updated()
     {
-    	// $this->withoutExceptionHandling();
+    	$this->withoutExceptionHandling();
 
     	$this->post('/manifest', [
         	'name' => 'Emmanuel',
@@ -92,11 +109,13 @@ class ManifestTest extends TestCase
         	'address' => '12 johnson, canada',
         ]);
 
-        $this->assertEquals('John', Manifest::first()->name);
-        $this->assertEquals('female', Manifest::first()->gender);
-        $this->assertEquals(4, Manifest::first()->seat_number);
-        $this->assertEquals('0804245432', Manifest::first()->phone);
-        $this->assertEquals('12 johnson, canada', Manifest::first()->address);
+        $this->assertDatabaseHas('manifests', [
+    		'name' => 'John',
+        	'gender' => 'female',
+        	'seat_number' => 4,
+        	'phone' => '0804245432',
+        	'address' => '12 johnson, canada',
+    	]);
 
         $response->assertRedirect('/manifest');
     }

@@ -26,7 +26,7 @@ class ManifestsController extends Controller
     	return redirect('/manifest');
     }
 
-    public function destory(Manifest $manifest, $id)
+    public function destory($id)
     {
     	Manifest::find($id)->delete();
 
